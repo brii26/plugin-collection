@@ -3,20 +3,26 @@ package tit.labpro.plugins.clock;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
-import tit.labpro.core.api.*;
+import tit.labpro.core.api.Plugin;
+import tit.labpro.core.api.PluginTemplate;
+import tit.labpro.core.api.ResizablePlugin;
 
-public class ClockPlugin extends PluginTemplate implements Plugin, ClockBackend.ClockUpdateListener, ResizablePlugin {
+public class ClockPlugin extends PluginTemplate implements Plugin, ResizablePlugin, ClockBackend.ClockUpdateListener {
+
     private final Label clockLabel;
     private final ClockBackend backend;
-    
 
     public ClockPlugin() {
-        backend = new ClockBackend(this);
-        clockLabel = new Label("00:00");
+        clockLabel = new Label("00:00:00");
         clockLabel.setFont(Font.font("Consolas", 40));
         getChildren().add(clockLabel);
-        enableResizeAndDrag(); 
+        setSize(250, 150);
+        setLayoutX(100);
+        setLayoutY(100);
+        backend = new ClockBackend(this);
+        enableResizeAndDrag();
     }
+
 
     @Override
     public Parent getUI() {

@@ -19,7 +19,7 @@
 
     <modules>
         <module>clock</module>
-        <module>analytics</module>
+        <module>shipment_analytics</module>
     </modules>
 
 
