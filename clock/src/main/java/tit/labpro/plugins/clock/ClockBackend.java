@@ -1,48 +1,39 @@
 package tit.labpro.plugins.clock;
 
-import javafx.application.Platform;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
+
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-public class ClockBackend implements Runnable {
-    private volatile boolean running = false;
-    private Thread thread;
-    private final ClockUpdateListener listener;
+public class ClockBackend {
 
     public interface ClockUpdateListener {
         void onTimeUpdate(String time);
     }
 
+    private final ClockUpdateListener listener;
+    private final Timeline timeline;
+
     public ClockBackend(ClockUpdateListener listener) {
         this.listener = listener;
+        this.timeline = new Timeline(
+            new KeyFrame(Duration.seconds(1), e -> updateTime())
+        );
+        timeline.setCycleCount(Timeline.INDEFINITE);
+    }
+
+    private void updateTime() {
+        String timeStr = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+        listener.onTimeUpdate(timeStr);
     }
 
     public void start() {
-        if (running) return;
-        running = true;
-        thread = new Thread(this, "ClockBackendThread");
-        thread.setDaemon(true);
-        thread.start();
+        timeline.play();
     }
 
     public void stop() {
-        running = false;
-        if (thread != null) {
-            thread.interrupt();
-        }
-    }
-
-    @Override
-    public void run() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-        while (running) {
-            String currentTime = LocalTime.now().format(formatter);
-            Platform.runLater(() -> listener.onTimeUpdate(currentTime));
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                running = false;
-            }
-        }
+        timeline.stop();
     }
 }

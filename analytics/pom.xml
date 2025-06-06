@@ -5,7 +5,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>tit.labpro.plugins</groupId>
-    <artifactId>analytics</artifactId> <!-- ini jangan lupa ganti , ga penting si lol-->
+    <artifactId>analytics</artifactId>
     <version>1.0.0</version>
 
     <properties>
@@ -39,6 +39,11 @@
             <artifactId>javafx-graphics</artifactId>
             <version>${javafx.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-web</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -51,7 +56,7 @@
                 <version>0.0.8</version>
                 <configuration>
                     <!-- ini ganti jadi x.xPluginMain-->
-                    <mainClass>tit.labpro.plugins.analytics.AnalyticsPlugin</mainClass>
+                    <mainClass><tit class="labpro plugins analytics AnalyticsMain"></tit></mainClass>
                 </configuration>
                 <executions>
                     <execution>
