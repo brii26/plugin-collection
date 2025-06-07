@@ -2,6 +2,7 @@ package tit.labpro.plugins.shipment_analytics;
 
 import javafx.geometry.Side;
 import javafx.scene.chart.PieChart;
+import javafx.scene.shape.Rectangle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Parent;
@@ -20,11 +21,18 @@ public class ShipmentAnalyticsPlugin extends PluginTemplate implements Plugin, R
         chart = new PieChart();
         chart.setTitle("Shipment Status Analytics");
         chart.setLegendSide(Side.RIGHT);
-
-        getChildren().add(chart); 
         chart.setPrefSize(200, 150);
         chart.setMinSize(200, 150);
-        chart.setMaxSize(400, 400);
+        chart.setMaxSize(600, 600);
+
+        Rectangle clip = new Rectangle();
+        chart.setClip(clip);
+        chart.layoutBoundsProperty().addListener((obs, old, bounds) -> {
+            clip.setWidth(bounds.getWidth());
+            clip.setHeight(bounds.getHeight());
+        });
+
+        getContentWrapper().getChildren().add(chart);
         enableResizeAndDrag();
     }
 

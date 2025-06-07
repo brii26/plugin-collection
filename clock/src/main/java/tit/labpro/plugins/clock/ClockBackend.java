@@ -1,39 +1,47 @@
 package tit.labpro.plugins.clock;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.util.Duration;
+import javafx.application.Platform;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-public class ClockBackend {
+public class ClockBackend extends Thread {
 
     public interface ClockUpdateListener {
         void onTimeUpdate(String time);
     }
 
     private final ClockUpdateListener listener;
-    private final Timeline timeline;
+    private volatile boolean running = true;
 
     public ClockBackend(ClockUpdateListener listener) {
         this.listener = listener;
-        this.timeline = new Timeline(
-            new KeyFrame(Duration.seconds(1), e -> updateTime())
-        );
-        timeline.setCycleCount(Timeline.INDEFINITE);
     }
 
     private void updateTime() {
         String timeStr = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-        listener.onTimeUpdate(timeStr);
+        Platform.runLater(() -> listener.onTimeUpdate(timeStr));
     }
 
-    public void start() {
-        timeline.play();
+    @Override
+    public void run() {
+        while (running) {
+            updateTime();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                running = false;
+                break;
+            }
+        }
     }
 
-    public void stop() {
-        timeline.stop();
+    public void startClock() {
+        this.start();
+    }
+
+    public void stopClock() {
+        running = false;
+        this.interrupt();
     }
 }

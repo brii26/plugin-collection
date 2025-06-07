@@ -36,7 +36,7 @@ public class ClockPlugin extends PluginTemplate implements Plugin, ResizablePlug
 
     @Override
     public void onDeactivate() {
-        backend.stop();
+        backend.stopClock();
     }
 
     @Override
