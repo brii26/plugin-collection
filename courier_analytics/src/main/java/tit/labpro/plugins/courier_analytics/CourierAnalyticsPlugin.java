@@ -6,7 +6,6 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
 import javafx.scene.Parent;
 import tit.labpro.core.api.Plugin;
 import tit.labpro.core.api.PluginTemplate;
@@ -60,6 +59,8 @@ public class CourierAnalyticsPlugin extends PluginTemplate implements Plugin, Re
                 if (courier == null) continue;
                 Method getFullName = courier.getClass().getMethod("getFullName");
                 String courierName = (String) getFullName.invoke(courier);
+                if (!domesticMap.containsKey(courierName)) domesticMap.put(courierName, 0);
+                if (!internationalMap.containsKey(courierName)) internationalMap.put(courierName, 0);
                 if (shipment.getClass().getSimpleName().equals("DomesticShipment")) {
                     domesticMap.put(courierName, domesticMap.getOrDefault(courierName, 0) + 1);
                 } else if (shipment.getClass().getSimpleName().equals("InternationalShipment")) {
@@ -78,11 +79,13 @@ public class CourierAnalyticsPlugin extends PluginTemplate implements Plugin, Re
                 internationalSeries.getData().add(new XYChart.Data<>(courierName, internationalMap.getOrDefault(courierName, 0)));
             }
 
-            chart.getData().addAll(domesticSeries, internationalSeries);
+            chart.getData().add(domesticSeries);
+            chart.getData().add(internationalSeries);
 
-            // Set bar colors: green for domestic, orange for international
+            chart.applyCss();
+            chart.layout();
             for (XYChart.Series<String, Number> series : chart.getData()) {
-                String color = series.getName().equals("Domestic") ? "#43a047" : "#ff9800";
+                String color = series.getName().equals("Domestic") ? "#e53935" : "#ff9800";
                 for (XYChart.Data<String, Number> data : series.getData()) {
                     data.nodeProperty().addListener((obs, oldNode, newNode) -> {
                         if (newNode != null) {
@@ -92,6 +95,9 @@ public class CourierAnalyticsPlugin extends PluginTemplate implements Plugin, Re
                     if (data.getNode() != null) {
                         data.getNode().setStyle("-fx-bar-fill: " + color + ";");
                     }
+                }
+                if (series.getNode() != null && series.getNode().lookup(".chart-legend-item-symbol") != null) {
+                    series.getNode().lookup(".chart-legend-item-symbol").setStyle("-fx-background-color: " + color + ", white;");
                 }
             }
         } catch (Exception e) {
