@@ -18,8 +18,9 @@
     </properties>
 
     <modules>
-        <module>clock</module>
+        <module>parcel_analytics</module>
         <module>shipment_analytics</module>
+        <module>courier_analytics</module>
     </modules>
 
 

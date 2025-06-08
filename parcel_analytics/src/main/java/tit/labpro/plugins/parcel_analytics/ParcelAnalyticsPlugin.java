@@ -1,4 +1,4 @@
-package tit.labpro.plugins.shipment_analytics;
+package tit.labpro.plugins.parcel_analytics;
 
 import javafx.geometry.Side;
 import javafx.scene.chart.PieChart;
@@ -6,20 +6,22 @@ import javafx.scene.shape.Rectangle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Parent;
-import tit.labpro.core.api.*;
+import tit.labpro.core.api.Plugin;
+import tit.labpro.core.api.PluginTemplate;
+import tit.labpro.core.api.ResizablePlugin;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ShipmentAnalyticsPlugin extends PluginTemplate implements Plugin, ResizablePlugin {
+public class ParcelAnalyticsPlugin extends PluginTemplate implements Plugin, ResizablePlugin {
 
     private Object repository;
     private final PieChart chart;
 
-    public ShipmentAnalyticsPlugin() {
+    public ParcelAnalyticsPlugin() {
         chart = new PieChart();
-        chart.setTitle("Shipment Status Analytics");
+        chart.setTitle("Parcel Status Analytics");
         chart.setLegendSide(Side.RIGHT);
         chart.setPrefSize(200, 150);
         chart.setMinSize(200, 150);
@@ -39,21 +41,19 @@ public class ShipmentAnalyticsPlugin extends PluginTemplate implements Plugin, R
         if (repository == null) return;
         try {
             Method getAll = repository.getClass().getMethod("getAll");
-            List<?> shipments = (List<?>) getAll.invoke(repository);
+            List<?> parcels = (List<?>) getAll.invoke(repository);
 
             Map<String, Integer> statusCount = new HashMap<>();
-            for (Object shipment : shipments) {
-                Method getCurrentStatus = shipment.getClass().getMethod("getCurrentStatus");
-                Object status = getCurrentStatus.invoke(shipment);
-
+            for (Object parcel : parcels) {
+                Method getStatus = parcel.getClass().getMethod("getStatus");
+                Object status = getStatus.invoke(parcel);
                 Method getName = status.getClass().getMethod("getName");
                 String name = (String) getName.invoke(status);
-
                 statusCount.put(name, statusCount.getOrDefault(name, 0) + 1);
             }
 
             ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList();
-            for (var entry : statusCount.entrySet()) {
+            for (Map.Entry<String, Integer> entry : statusCount.entrySet()) {
                 pieData.add(new PieChart.Data(entry.getKey(), entry.getValue()));
             }
             chart.setData(pieData);
@@ -65,7 +65,7 @@ public class ShipmentAnalyticsPlugin extends PluginTemplate implements Plugin, R
 
     @Override
     public Parent getUI() {
-        return this; 
+        return this;
     }
 
     @Override
@@ -73,16 +73,16 @@ public class ShipmentAnalyticsPlugin extends PluginTemplate implements Plugin, R
         setPrefSize(width, height);
     }
 
-
     @Override
     public void setData(Object data) {
         try {
-            Method getShipmentRepository = data.getClass().getMethod("getShipmentRepository");
-            Object shipmentRepo = getShipmentRepository.invoke(data);
-            this.repository = shipmentRepo;
+            Method getParcelRepository = data.getClass().getMethod("getParcelRepository");
+            Object parcelRepo = getParcelRepository.invoke(data);
+            this.repository = parcelRepo;
             updateChart();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 }

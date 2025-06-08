@@ -1,29 +1,22 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
+<project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
-                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>tit.labpro.plugins</groupId>
-    <artifactId>clock</artifactId>
+    <artifactId>courier_analytics</artifactId>
     <version>1.0.0</version>
-
     <properties>
         <java.version>17</java.version>
         <javafx.version>17.0.2</javafx.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
     </properties>
-
     <dependencies>
-        <!-- Core API ini dari repo lain udah bikin api buat plugin -->
         <dependency>
             <groupId>tit.labpro.core</groupId>
             <artifactId>core-api</artifactId>
             <version>1.0</version>
         </dependency>
-
-        <!-- JavaFX modules -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -40,18 +33,15 @@
             <version>${javafx.version}</version>
         </dependency>
     </dependencies>
-
     <build>
-        <!--ini ganti namanya jadi x => x.jar , per plugin-->
-        <finalName>clock</finalName>
+        <finalName>courier_analytics</finalName>
         <plugins>
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <!-- ini ganti jadi x.xPluginMain-->
-                    <mainClass>tit.labpro.plugins.clock.ClockPluginMain</mainClass>
+                    <mainClass>tit.labpro.plugins.courier_analytics.CourierAnalyticsMain</mainClass>
                 </configuration>
                 <executions>
                     <execution>
@@ -63,5 +53,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
